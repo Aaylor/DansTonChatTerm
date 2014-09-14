@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'dtcterm'
+Dtcterm.main(ARGV)
