@@ -26,7 +26,7 @@ module Dtcterm
         DTC_TOP_URL             = "http://danstonchat.com/top50.html"
 
         def version
-            '0.2.0'
+            '0.2.1'
         end
 
 
@@ -167,7 +167,7 @@ module Dtcterm
                 exit 1
             end
 
-            html = get_page_html(DTC_RANDOM_POSITIVE_URL)
+            html = get_page_html($dtc_choice)
             quote_list = get_quote_list(html)
             display_quote_list(quote_list)
         end
