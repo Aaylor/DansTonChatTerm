@@ -5,10 +5,12 @@ module Dtcterm
         raise 'win32console is needed to use color on Windows. Try `gem install win32console`'
     end
 
+    require 'htmlentities'
     require 'optparse'
-    require 'nokogiri'
     require 'open-uri'
+    require 'nokogiri'
     require 'rubygems'
+
 
     class << self
 
@@ -24,7 +26,7 @@ module Dtcterm
         DTC_TOP_URL             = "http://danstonchat.com/top50.html"
 
         def version
-            '0.1.0'
+            '0.2.0'
         end
 
 
@@ -72,25 +74,30 @@ module Dtcterm
                 quote.id = item["class"].gsub(/[^\d]/, '')
                 quote.link = BASE_QUOTE_LINK.gsub("id", quote.id)
 
-                quote_item = item.children()[0].children()[0].children()[0]
-                while quote_item
-                    # A quote is always like : <span class="decoration">text</span> text
-                    # The "decoration" class means the username
+                quote_item = item.children()[0].children()[0]
 
-                    # Getting the span text.
-                    first = quote_item.text.sub(/\<br>/, '').strip()
-
-                    # Getting the rest of text
-                    quote_item = quote_item.next()
-                    if (quote_item != nil)
-                        second = quote_item.text.sub(/'\<br>/, '').strip()
-                        quote_item = quote_item.next()
+                quote_item.children().each do |i|
+                    if i["class"] == "decoration"
+                        i.content = "|newline|" + i.content + "|decorationclass|"
                     end
-
-                    quote.quote << [first, second]
                 end
 
-                quote_list << quote
+                while quote_item
+                    str = HTMLEntities.new.decode quote_item.content.gsub(/\|newline\|/, "\n")
+
+                    str.each_line do |line|
+                        unless line =~ /^[[:space:]]+$/
+                            first, second = line.split(/\|decorationclass\|/)
+                            quote.quote << [first.strip(), second ? second.strip() : second]
+                        end
+                    end
+
+                    quote_list << quote
+                    if (quote_item != nil)
+                        quote_item = quote_item.next()
+                    end
+                end
+
             end
 
             quote_list
@@ -117,7 +124,7 @@ module Dtcterm
 
                 opts.banner = "Usage: dtcterm one_quote_option [color_option]"
 
-                opts.version = VERSION
+                opts.version = version
 
                 opts.on("-c", "--no-color", "Enlève la couleur.") do
                     $using_color = false

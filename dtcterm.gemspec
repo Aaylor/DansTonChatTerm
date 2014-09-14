@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
     s.files         = ['lib/dtcterm.rb']
     s.test_files    = ['test/test_dtcterm.rb']
 
-    s.add_runtime_dependency 'nokogiri', '>=1.5.6'
+    s.add_runtime_dependency 'nokogiri', [">= 1.5.6"]
+    s.add_runtime_dependency 'htmlentities', [">= 4.3.0"]
     
     s.add_development_dependency 'nokogiri', '>=1.5.6'
 end

@@ -37,7 +37,7 @@ class DtctermTest < Test::Unit::TestCase
         eos
 
         html = html.gsub(/\n/, '').strip.gsub(/[[:space:]]{2,}/, '')
-        quote_list = Dtcterm::get_quote_list(Nokogiri::XML(html))
+        quote_list = Dtcterm::get_quote_list(Nokogiri::HTML(html))
 
         quote = quote_list[0]
         assert_equal quote.id, "1234"
