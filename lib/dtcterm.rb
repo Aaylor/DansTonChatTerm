@@ -28,7 +28,7 @@ module Dtcterm
     DTC_TOP_URL             = "http://danstonchat.com/top50.html"
 
     def version
-      '0.2.1'
+      '0.3.0'
     end
 
 
