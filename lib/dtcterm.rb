@@ -31,15 +31,23 @@ module Dtcterm
 
 
     def version
-      '0.3.0'
+      '0.3.1'
     end
 
 
-
+    # Class that contains every usefull information for a quote
     class Quote
+
+      # Quote id.
       attr_accessor :id
+
+      # Link to the quote.
       attr_accessor :link
+
+      # The text as an array of [user, text]
       attr_accessor :quote
+
+      # Usernames existing in the quote
       attr_accessor :usernames
 
 
@@ -59,7 +67,9 @@ module Dtcterm
         }
       end
 
-      def get_color
+      # Return the first color non set.
+      # If no colors available, then it returns the default one.
+      def self.get_color
         @colors.each {
           |key, val| 
           (val[:set] = true; return val[:syn]) unless val[:set]
@@ -67,14 +77,24 @@ module Dtcterm
         DEFAULT_COLOR
       end
 
-      def add_user(user)
+      # Add the user to the usernames list.
+      # 
+      # Arguments:
+      #   colors: (string)
+      def self.add_user(user)
         @usernames[user] = get_color unless @usernames.has_key?(user)
       end
 
-      def colorize(color, text)
+      # Colorize the text from the given color
+      # 
+      # Arguments:
+      #   colors: (string)
+      #   text: (string)
+      def self.colorize(color, text)
         "\e[#{color}m#{text}\e[0m"
       end
 
+      # Display the quote to stdout
       def display
         print "Quote ##{id}\n"
         print "Link: #{link}\n"
@@ -89,6 +109,10 @@ module Dtcterm
 
 
 
+    # Open the html page. Exit the script if it can't reach the server.
+    # 
+    # Arguments:
+    #   url: (string)
     def get_page_html(url)
       begin
         Nokogiri::HTML(open(url))
@@ -98,6 +122,10 @@ module Dtcterm
       end
     end
 
+    # Give the quote list from the html page.
+    #
+    # Arguments:
+    #   html: (string)
     def get_quote_list(html)
       quote_list = Array.new
 
@@ -135,6 +163,10 @@ module Dtcterm
       quote_list
     end
 
+    # Display a list of quote
+    #
+    # Arguments:
+    #   quote_list: (array)
     def display_quote_list(quote_list)
       quote_list.each do |quote|
         quote.display
@@ -142,9 +174,8 @@ module Dtcterm
       end
     end
 
-
-
     def main(options)
+      # Exit the program if a choice has already been made.
       def self.quote_already_set
         unless $dtc_choice.empty?
           puts("Un choix de quote a déjà été fait.")

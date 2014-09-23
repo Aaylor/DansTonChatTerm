@@ -1,4 +1,12 @@
 #!/usr/bin/env ruby
 
+trap "SIGINT" do
+  exit 130
+end
+
+trap "SIGKILL" do
+  exit 130
+end
+
 require 'dtcterm'
 Dtcterm.main(ARGV)
