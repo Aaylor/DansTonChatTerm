@@ -27,6 +27,9 @@ module Dtcterm
     DTC_RANDOM_POSITIVE_URL = "http://danstonchat.com/random0.html"
     DTC_TOP_URL             = "http://danstonchat.com/top50.html"
 
+    DEFAULT_COLOR = "37"
+
+
     def version
       '0.3.0'
     end
@@ -37,22 +40,49 @@ module Dtcterm
       attr_accessor :id
       attr_accessor :link
       attr_accessor :quote
+      attr_accessor :usernames
+
 
       def initialize
         @id = 0
         @link = ""
         @quote = Array.new { Array.new(2) }
+        @usernames = {}
+
+        @colors = {
+          "red"     => { :syn => "31", :set => false },
+          "green"   => { :syn => "32", :set => false },
+          "yellow"  => { :syn => "33", :set => false },
+          "blue"    => { :syn => "34", :set => false },
+          "purple"  => { :syn => "35", :set => false },
+          "cyan"    => { :syn => "36", :set => false }
+        }
       end
 
-      def colorize(text)
-        "\e[32m#{text}\e[0m"
+      def get_color
+        @colors.each {
+          |key, val| 
+          (val[:set] = true; return val[:syn]) unless val[:set]
+        }
+        DEFAULT_COLOR
+      end
+
+      def add_user(user)
+        @usernames[user] = get_color unless @usernames.has_key?(user)
+      end
+
+      def colorize(color, text)
+        "\e[#{color}m#{text}\e[0m"
       end
 
       def display
         print "Quote ##{id}\n"
         print "Link: #{link}\n"
         @quote.each do |item|
-          print "#{$using_color ? colorize(item[0]) : item[0]} #{item[1]}\n"
+          add_user(item[0])
+          print "#{$using_color \
+                   ? colorize(@usernames[item[0]], item[0]) \
+                   : item[0]} #{item[1]}\n"
         end
       end
     end
