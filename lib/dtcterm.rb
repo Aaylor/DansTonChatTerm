@@ -31,7 +31,7 @@ module Dtcterm
 
 
     def version
-      '0.3.1'
+      '0.3.2'
     end
 
 
@@ -69,7 +69,7 @@ module Dtcterm
 
       # Return the first color non set.
       # If no colors available, then it returns the default one.
-      def self.get_color
+      def get_color
         @colors.each {
           |key, val| 
           (val[:set] = true; return val[:syn]) unless val[:set]
@@ -81,7 +81,7 @@ module Dtcterm
       # 
       # Arguments:
       #   colors: (string)
-      def self.add_user(user)
+      def add_user(user)
         @usernames[user] = get_color unless @usernames.has_key?(user)
       end
 
@@ -90,7 +90,7 @@ module Dtcterm
       # Arguments:
       #   colors: (string)
       #   text: (string)
-      def self.colorize(color, text)
+      def colorize(color, text)
         "\e[#{color}m#{text}\e[0m"
       end
 
